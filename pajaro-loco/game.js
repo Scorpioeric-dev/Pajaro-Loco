@@ -10,7 +10,7 @@ let frames = 0;
 const sprite = new Image();
 sprite.src = "img/sprite.png";
 
-//Background
+//Background setting function
 const bg = {
   sX: 0,
   sY: 0,
@@ -44,7 +44,7 @@ const bg = {
   }
 };
 
-//foreground
+//foreground setting function
 const fg = {
   sX: 276,
   sY: 0,
@@ -79,7 +79,7 @@ const fg = {
   }
 };
 
-// Bird Animation controls it's X and Y position in Flight
+// Bird & Animation controls it's X and Y position in Flight function
 const bird = {
   animation: [
     { sX: 276, sY: 112 },
@@ -108,7 +108,7 @@ const bird = {
   }
 };
 
-//Get Ready Message
+//Get Ready Message function
 const getReady  = {
   sx:0,
   sY:228,
@@ -133,7 +133,9 @@ const getReady  = {
 
 }
 
-//Draw
+//Game over Message function
+
+//Draw function invoking all above functions
 function draw() {
   //This is the background of entire image
   ctx.fillStyle = "#70c5ce";
