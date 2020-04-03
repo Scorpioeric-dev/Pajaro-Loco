@@ -1,16 +1,43 @@
 // JAVASCRIPT CODE //
 const cvs = document.getElementById("canvas");
+const cvs = document.getElementById('bird'
+const ctx = cvs.getContext('2d'))
 const ctx = cvs.getContext("2d");
+//Game vars and const
 let frames = 0;
+
+//Load sprite image
 const sprite = new Image()
 sprite.src = "img/sprite.png"
 
+//Background
+const bg = {
+    sX: 0,
+    sY: 0,
+    w : 275,
+    h : 276,
+    x : 0,
+    y :cvs.height - 226,
+    draw : function(){
+        ctx.drawImage(sprite,this.sX,this.sY,this.w,this.h,this.x,this.y,this.w,this.h)
+    }
+}
+
+//Draw
 function draw() {
   //This is the background of entire image
   ctx.fillStyle = "#70c5ce";
   ctx.fillRect(0, 0, cvs.width, cvs.height);
-  ctx.drawImage(sprite,sX,sY,sWidth,sHeight,dX,dY,dWidth,dHeight)
+ bg.draw()
 }
+
+
+//Update
+function update(){
+
+}
+
+//loop
 function loop() {
   update();
   draw();
