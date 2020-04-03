@@ -79,13 +79,42 @@ const fg = {
   }
 };
 
+// Bird Animation controls it's X and Y position in Flight
+const bird = {
+  animation: [
+    { sX: 276, sY: 112 },
+    { sX: 276, sY: 139 },
+    { sX: 276, sY: 164 },
+    { sX: 276, sY: 139 }
+  ],
+  x: 50,
+  y: 150,
+  w: 34,
+  h: 26,
+  frame: 0,
+  draw: function() {
+    let bird = this.animation[this.frame];
+    ctx.drawImage(
+      sprite,
+      bird.sX,
+      bird.sY,
+      this.w,
+      this.h,
+      this.x,
+      this.y,
+      this.w,
+      this.h
+    );
+  }
+};
+
 //Draw
 function draw() {
   //This is the background of entire image
   ctx.fillStyle = "#70c5ce";
   ctx.fillRect(0, 0, cvs.width, cvs.height);
   bg.draw();
-  fg.draw()
+  fg.draw();
 }
 
 //Update
