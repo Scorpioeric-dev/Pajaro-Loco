@@ -100,13 +100,38 @@ const bird = {
       bird.sY,
       this.w,
       this.h,
+      this.x - this.w/2,
+      this.y - this.h/2,
+      this.w,
+      this.h
+    );
+  }
+};
+
+//Get Ready Message
+const getReady  = {
+  sx:0,
+  sY:228,
+  w:173,
+  h:152,
+  //center of position on the board
+  x:cvs.width/2 - 173/2,
+  y:80,
+  draw:function(){
+    ctx.drawImage(
+      sprite,
+      this.sX,
+      this.sY,
+      this.w,
+      this.h,
       this.x,
       this.y,
       this.w,
       this.h
     );
   }
-};
+
+}
 
 //Draw
 function draw() {
@@ -115,6 +140,8 @@ function draw() {
   ctx.fillRect(0, 0, cvs.width, cvs.height);
   bg.draw();
   fg.draw();
+  bird.draw()
+  getReady.draw()
 }
 
 //Update
