@@ -10,6 +10,21 @@ const Degree = Math.PI / 180;
 //Load sprite image
 const sprite = new Image();
 sprite.src = "img/sprite.png";
+//Loading sound
+const score_S = new Audio();
+score_S.src = "audio/sfx_point.wav";
+
+const Flap = new Audio();
+Flap.src = "audio/sfx_flap.wav";
+
+const Hit = new Audio();
+Hit.src = "audio/sfx_hit.wav";
+
+const Die = new Audio();
+Die.src = "audio/sfx_die.wav";
+
+const Swooshing = new Audio();
+Swooshing.src = "audio/sfx_swooshing.wav";
 
 //Game state
 const state = {
@@ -19,16 +34,41 @@ const state = {
   over: 2
 };
 
+//Start button coord
+const startBtn = {
+  x: 120,
+  y: 263,
+  w: 83,
+  h: 29
+};
+
 // Control of the game
 cvs.addEventListener("click", function(evt) {
   switch (state.current) {
     case state.getReady:
       state.current = state.game;
+      Swooshing.play();
       break;
     case state.game:
       bird.flap();
+      Flap.play();
       break;
     case state.over:
+      let rect = cvs.getBoundingClientRect();
+      let clickX = evt.clientX - rect.left;
+      let clickY = evt.clientY - rect.top;
+      //Check if we click on start button
+      if (
+        clickX >= startBtn &&
+        clickX <= startBtn.x + startBtn.w &&
+        clickY >= startBtn.y &&
+        clickY <= startBtn.y + startBtn.h
+      ) {
+      }
+      pipes.reset();
+      bird.speedReset();
+      score.reset();
+
       state.current = state.getReady;
       break;
   }
@@ -168,6 +208,7 @@ const bird = {
         this.y = cvs.height - fg.h - this.h / 2;
         if (state.current == state.game) {
           state.current = state.over;
+          Die.play();
         }
       }
       //If the speed is greater than the jump means the bird is falling down
@@ -178,6 +219,9 @@ const bird = {
         this.rotation = -25 * Degree;
       }
     }
+  },
+  speedReset: function() {
+    this.speed = 0;
   }
 };
 
@@ -247,14 +291,15 @@ const pipes = {
   h: 400,
   gap: 85,
   maxYPos: -150,
-  dX: 2,
+  dx: 2,
   draw: function() {
     // console.log(pipes)
     //a for loop to loop over the position array of pipes
     for (let i = 0; i < this.position.length; i++) {
+      console.log("hit");
       let p = this.position[i];
       let topYPos = p.y;
-      let bottomYPos = p.y + this.h + this.gap;
+      let bottomYPos = p.y + this.gap + this.h;
       //top pipe image
       ctx.drawImage(
         sprite,
@@ -282,6 +327,7 @@ const pipes = {
     }
   },
   update: function() {
+    // console.log("hit2");
     if (state.current !== state.game) return;
     if (frames % 100 == 0) {
       this.position.push({
@@ -290,6 +336,7 @@ const pipes = {
       });
     }
     for (let i = 0; i < this.position.length; i++) {
+      console.log("HHit2");
       let p = this.position[i];
 
       let bottomPipeYPos = p.y + this.h + this.gap;
@@ -302,6 +349,7 @@ const pipes = {
         bird.y - bird.radius < p.y + this.h
       ) {
         state.current = state.over;
+        Hit.play()
       }
       //Bottom Pipe
       if (
@@ -311,6 +359,7 @@ const pipes = {
         bird.y - bird.radius < bottomPipeYPos + this.h
       ) {
         state.current = state.over;
+        Hit.play()
       }
 
       // Move the Pipes to the left
@@ -318,17 +367,21 @@ const pipes = {
       //if the pipes go beyond the canvas , we delete them from the array
       if (p.x + this.w <= 0) {
         this.position.shift();
-        score.value += 1
+        score.value += 1;
+        score_S.play()
 
-        score.best = Math.max(score.value,score.best)
-        localStorage.setItem("best",score.best)
+        score.best = Math.max(score.value, score.best);
+        localStorage.setItem("best", score.best);
       }
     }
+  },
+  reset: function() {
+    this.position = [];
   }
 };
 //Score logic
 const score = {
-  best: +(localStorage.getItem("best")) || 0,
+  best: +localStorage.getItem("best") || 0,
   value: 0,
   draw: function() {
     ctx.fillStyle = "#000";
@@ -348,6 +401,9 @@ const score = {
       ctx.fillText(this.best, 225, 228);
       ctx.strokeText(this.best, 225, 228);
     }
+  },
+  reset: function() {
+    this.value = 0;
   }
 };
 
@@ -356,22 +412,21 @@ function draw() {
   //This is the background of entire image
   ctx.fillStyle = "#70c5ce";
   ctx.fillRect(0, 0, cvs.width, cvs.height);
-
+  
   bg.draw();
-  pipes.draw();
   fg.draw();
+  pipes.draw();
   bird.draw();
   getReady.draw();
   gameOver.draw();
-  score.draw()
+  score.draw();
 }
 
 //Update
 function update() {
+  pipes.update();
   bird.update();
   fg.update();
-  pipes.update();
-  // console.log(pipes)
 }
 
 //loop
